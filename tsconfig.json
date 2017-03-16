@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": [ "es2015" ],
+    "outDir": "dist",
+    "removeComments": true,
+    "target": "es5"
+  },
+  "include": [
+    "src",
+    "typings"
+  ]
+}
