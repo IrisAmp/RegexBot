@@ -1,13 +1,10 @@
 import { getSRDAttachment } from './SRD';
 import { getWolframAttachment } from './Wolfram';
+import { getRollAttachment } from './Dice';
+import { manpage } from './Manpage';
 
 const Botkit = require('botkit');
 const KEYS = require('../config/keys.json');
-
-if (!KEYS.slack) {
-  console.error('No bot token.');
-  process.exit(1);
-}
 
 function formatBotResponse(msg: string): string {
   return `\`${msg}\``;
@@ -26,25 +23,42 @@ controller.spawn({
   if (error) { throw new Error(error); }
 });
 
-controller.on(['direct_message','direct_mention','mention'], (bot, message) => {
+controller.hears(`man (\\d+ )?regex-bot`, ['direct_message', 'ambient'], manpage);
+controller.on(['direct_message'], (bot, message) => {
+  if (/man ?(\d+ )?(regex-bot)?/i.test(message.text)) {
+    manpage(bot, message);
+  } else {
+    initiateConversation(bot, message);
+  }
+});
+controller.on(['direct_mention', 'mention'], initiateConversation);
+
+function initiateConversation(bot, message): void {
   bot.startConversation(message, (error, convo) => {
-    convo.ask(formatBotResponse(`CONNECTION TO [${message.user}] OPENED. STATE QUERY.`), [
+    convo.ask(formatBotResponse(`CONNECTION TO [${message.user}] OPENED. STATE DIRECTIVE.`), [
       {
-        pattern: `purpose`,
+        pattern: /^purpose$/i,
         callback: (response, convo) => {
           convo.say(formatBotResponse('SUCK IT, @tcp'));
           convo.next();
         }
       },
       {
-        pattern: `help`,
+        pattern: /^help$/i,
         callback: (response, convo) => {
           convo.say(formatBotResponse('ERROR: I AM NOT PROGRAMMED FOR COMPASSION.'));
           convo.next();
         }
       },
       {
-        pattern: `repo`,
+        pattern: /^version$/i,
+        callback: (response, convo) => {
+          convo.say(formatBotResponse('slack-regex-bot@latest'));
+          convo.next();
+        }
+      },
+      {
+        pattern: /^repo$/i,
         callback: (response, convo) => {
           convo.say(formatBotResponse('https://github.com/IrisAmp/RegexBot'));
           convo.next();
@@ -77,13 +91,33 @@ controller.on(['direct_message','direct_mention','mention'], (bot, message) => {
         }
       },
       {
+        pattern: /roll\s+(.*)$/i,
+        callback: (response, convo) => {
+          getRollAttachment(response.match[1]).then((attachment) => {
+            convo.say({ attachments: [attachment] });
+            convo.next();
+          }).catch((reason) => {
+            convo.say(formatBotResponse(`ERROR: ${reason}`));
+            convo.next();
+          });
+        }
+      },
+      {
+        pattern: `bork`,
+        callback: (response, convo) => {
+          convo.say('Bark?');
+          convo.say(':ohmydog:');
+          convo.next();
+        }
+      },
+      {
         default: true,
         callback: (response, convo) => {
-          convo.say(formatBotResponse(`ERROR: UNRECOGNIZED QUERY ${response.text}`));
+          convo.say(formatBotResponse(`ERROR: UNRECOGNIZED DIRECTIVE ${response.text}`));
           convo.next();
         }
       }
     ]);
     convo.setTimeout(30000);
   });
-});
+}
