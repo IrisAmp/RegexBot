@@ -6,10 +6,10 @@ Suck it, Tom.
 This bot has nothing to do with regexes.
 
 ## Running
-Run the following:
+Add your API keys to the file `config/keys.json`, then run:
 ```
 npm install
-npm start [OAuth Token]
+npm start
 ```
 
 ## License
