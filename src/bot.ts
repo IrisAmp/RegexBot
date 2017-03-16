@@ -46,7 +46,7 @@ controller.on(['direct_message','direct_mention','mention'], (bot, message) => {
       {
         pattern: `repo`,
         callback: (response, convo) => {
-          convo.say(formatBotResponse(''));
+          convo.say(formatBotResponse('https://github.com/IrisAmp/RegexBot'));
           convo.next();
         }
       },
