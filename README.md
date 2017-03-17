@@ -1,9 +1,7 @@
 Regex Bot
 =========
 
-Suck it, Tom.
-
-This bot has nothing to do with regexes.
+This bot has almost nothing to do with regexes.
 
 ## Running
 Add your API keys to the file `config/keys.json`, then run:

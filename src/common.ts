@@ -42,3 +42,7 @@ export function parseHttpResponse(
     });
   }
 }
+
+export function formatBotResponse(msg: string): string {
+  return `\`${msg}\``;
+}

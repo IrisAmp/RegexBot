@@ -1,14 +1,13 @@
+import { getRollAttachment } from './Dice';
+import { fileIssue } from './Issue';
+import { manpage } from './Manpage';
 import { getSRDAttachment } from './SRD';
 import { getWolframAttachment } from './Wolfram';
-import { getRollAttachment } from './Dice';
-import { manpage } from './Manpage';
+
+import { formatBotResponse } from './common';
 
 const Botkit = require('botkit');
 const KEYS = require('../config/keys.json');
-
-function formatBotResponse(msg: string): string {
-  return `\`${msg}\``;
-}
 
 const controller = Botkit.slackbot({
   require_delivery: true,
@@ -62,6 +61,12 @@ function initiateConversation(bot, message): void {
         callback: (response, convo) => {
           convo.say(formatBotResponse('https://github.com/IrisAmp/RegexBot'));
           convo.next();
+        }
+      },
+      {
+        pattern: /^(?:bug|issue|feature-request)$/i,
+        callback: (response, convo) => {
+          fileIssue(response, convo, bot);
         }
       },
       {
