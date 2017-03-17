@@ -16,12 +16,19 @@ npm start
 Start a conversation by using a mention (ie: say "@regex-bot"). It will ACK you and you can send it
 any of the following queries.
 ### `purpose`
-States the bot's purpose.
+Display the bot's purpose.
 ### `help`
-Display help information
+Display help information.
+### `version`
+Display version information.
 ### `repo`
-Display a link to the bot's [source repo](https://github.com/IrisAmp/RegexBot).
-
+Display the bot's source repository.
+### `srd [query]`
+Lookup an entry in the Systems Reference Document (SRD).
+### `ask [query]`
+Ask a natural language query using the Wolfram|Alpha API.
+### `roll [query]`
+Roll dice using Roll20 syntax.
 
 ## License
 Licensed under the terms of the MIT license. See the file `LICENSE` in this 
