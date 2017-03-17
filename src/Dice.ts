@@ -11,19 +11,10 @@ export function getRollAttachment(query: string): Promise<IMessasgeAttachment> {
   if (query.length > 1024) {
     return Promise.reject(new Error('413: Payload Too Large'));
   } else if (crypto) {
-    return parseDiceQuery(query).then(createAttachmentFromData);
+    return Promise.reject(new Error('501: NOT IMPLEMENTED'));
   } else {
     return Promise.reject(new Error('HOST DOES NOT HAVE SUITABLE RNG'));
   }
-}
-
-class Dice {
-
-}
-
-function parseDiceQuery(query: string): Promise<Dice[]> {
-  let result: Dice[] = [];
-  return Promise.resolve(result);
 }
 
 interface Expression extends Array<Expression | string> {
@@ -76,6 +67,6 @@ export function parseExpression(query: string): Expression {
   return result;
 }
 
-function createAttachmentFromData(dice: Dice[]): Promise<IMessasgeAttachment> {
-  return Promise.reject(new Error('NOT IMPLEMENTED'));
+function translateExpression() {
+  
 }

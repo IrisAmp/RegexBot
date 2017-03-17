@@ -1,16 +1,10 @@
 import * as https from 'https';
 import * as querystring from 'querystring';
 
+import { IMessasgeAttachment } from './common';
+
 export function getSRDAttachment(query: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    lookupSRD(query, (error, data) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(createAttachmentFromData(data));
-      }
-    });
-  });
+  return lookupSRD(query).then(createAttachmentFromData);
 }
 
 function getCompendiumUrl(query: string): string {
@@ -25,7 +19,7 @@ function getCompendiumPath(query: string): string {
   return `/compendium/dnd5e/${querystring.escape(query)}`;
 }
 
-function createAttachmentFromData(data: any): any {
+function createAttachmentFromData(data: any): IMessasgeAttachment {
   let fields: any[] = [];
   Object.keys(data.data).forEach((key) => {
     fields.push({
@@ -46,33 +40,35 @@ function createAttachmentFromData(data: any): any {
   return result;
 }
 
-export function lookupSRD(query: string, callback: (error: Error | null, json: any) => void): void {
-  let req = https.get({
-    host: 'roll20.net',
-    path: getCompendiumJsonPath(query),
-  }, (response) => {
-    if (response.statusCode !== 200) {
-      callback(new Error(`${response.statusCode}: ${response.statusMessage}`), null);
-    } else {
-      response.setEncoding('utf8');
-      let raw = '';
-      response.on('data', (chunk) => {
-        raw += chunk;
-      });
-      response.on('end', () => {
-        let error = null;
-        let result = null;
-        try {
-          result = JSON.parse(raw);
-        } catch (e) {
-          error = e;
-        }
-        callback(error, result);
-      });
-    }
+export function lookupSRD(query: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    let req = https.get({
+      host: 'roll20.net',
+      path: getCompendiumJsonPath(query),
+    }, (response) => {
+      if (response.statusCode !== 200) {
+        reject(new Error(`${response.statusCode}: ${response.statusMessage}`));
+      } else {
+        response.setEncoding('utf8');
+        let raw = '';
+        response.on('data', (chunk) => {
+          raw += chunk;
+        });
+        response.on('end', () => {
+          let error = null;
+          let result = null;
+          try {
+            result = JSON.parse(raw);
+          } catch (e) {
+            reject(e);
+          }
+          resolve(result);
+        });
+      }
+    });
+    req.on('error', (e) => {
+      reject(e);
+    });
+    req.end();
   });
-  req.on('error', (e) => {
-    callback(e, null);
-  });
-  req.end();
 }

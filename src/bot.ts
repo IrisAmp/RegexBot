@@ -105,7 +105,7 @@ function initiateConversation(bot, message): void {
       {
         pattern: `bork`,
         callback: (response, convo) => {
-          convo.say('Bark?');
+          convo.say('Bork bork bork!');
           convo.say(':ohmydog:');
           convo.next();
         }
