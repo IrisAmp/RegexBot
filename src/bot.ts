@@ -1,8 +1,9 @@
-import { getRollAttachment } from './Dice';
 import { fileIssue } from './Issue';
-import { manpage } from './Manpage';
+import { getRollAttachment } from './Dice';
 import { getSRDAttachment } from './SRD';
 import { getWolframAttachment } from './Wolfram';
+import { issueStatus } from './BugStatus';
+import { manpage } from './Manpage';
 
 import { formatBotResponse } from './common';
 
@@ -67,6 +68,19 @@ function initiateConversation(bot, message): void {
         pattern: /^(?:bug|issue|feature-request)$/i,
         callback: (response, convo) => {
           fileIssue(response, convo, bot);
+        }
+      },
+      {
+        pattern: /^\#(\d+)$/i,
+        callback: (response, convo) => {
+          convo.say(formatBotResponse('LOADING...'));
+          issueStatus(response.match[1]).then((attachment) => {
+            convo.say({ attachments: [attachment] });
+            convo.next();
+          }).catch((reason) => {
+            convo.say(formatBotResponse(`ERROR: ${reason}`));
+            convo.next();
+          });
         }
       },
       {
