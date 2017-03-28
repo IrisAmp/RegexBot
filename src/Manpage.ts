@@ -21,6 +21,8 @@ DESCRIPTION
       Display the bot's source repository.
     bug|issue|feature-request
       Start the Github issue dialog.
+    #[n]
+      Get information about an issue on the bot's repository.
     srd [query]
       Lookup an entry in the Systems Reference Document (SRD).
     ask [query]
