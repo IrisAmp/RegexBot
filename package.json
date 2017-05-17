@@ -9,10 +9,11 @@
   "author": "Brandon Yue",
   "license": "MIT",
   "dependencies": {
-    "botkit": "0.5.1"
+    "botkit": "0.5.4",
+    "dicelang": "0.0.0"
   },
   "devDependencies": {
-    "@types/node": "7.0.8",
+    "@types/node": "7.0.18",
     "typescript": "latest"
   }
 }
